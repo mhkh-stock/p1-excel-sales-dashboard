@@ -1,5 +1,7 @@
 # P1 — Excel Sales Dashboard for a Retail Shop
 
+**Repo:** https://github.com/mhkh-stock/p1-excel-sales-dashboard
+
 **Shop:** BrightMart Retail (fictional) · **Period:** Jan–Jun 2026 · **Status: SAMPLE delivery on DEMO data**
 **Tools:** Microsoft Excel (formulas, Excel Table, charts) · **File:** `BrightMart_Sales_Dashboard.xlsx`
 
@@ -103,9 +105,19 @@ No customer names, phone numbers or payment details exist in this data — by de
 - Excel formulas are the right tool at this size; past ~10k rows a database +
   Power BI would be the honest next step.
 
+## Screenshots
+
+Rendered 7 Nov 2026 from the live workbook with LibreOffice (values are
+the workbook's own live formulas, recalculated on open):
+
+| File | What it shows |
+|---|---|
+| `screenshots/dashboard.png` | The Dashboard sheet — KPIs, monthly/category/product tables, both charts |
+| `screenshots/data-sample.png` | The Data sheet, first page (720-row `SalesData` table, formula-driven Sales column) |
+
 ## Repo standard note
 
 This paid project follows the portfolio repo standard (Master Plan §3.2), slimmed for
 an Excel deliverable: README + data dictionary (`data/README.md`) + the deliverable
-itself + a Fiverr-ready package note (`PACKAGE-NOTE.md`) + a reproducible build script.
-No screenshots are bundled yet — they are added at publish time from the live workbook.
+itself + a Fiverr-ready package note (`PACKAGE-NOTE.md`) + a reproducible build script
++ screenshots of the live workbook (`screenshots/`).
