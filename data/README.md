@@ -5,8 +5,8 @@ Source sheet: **Data** in `BrightMart_Sales_Dashboard.xlsx`, Excel Table `SalesD
 
 | Column | Type | Meaning | Example / notes |
 |---|---|---|---|
-| Order ID | Text | Unique order reference, `ORD-0001` … `ORD-0720`, in date order | One row = one product line in an order (an order with 2 products = 2 rows) |
-| Order Date | Date (`yyyy-mm-dd`) | Date of the transaction | Range: 2026-01-01 to 2026-06-30 |
+| Order ID | Text | Unique order reference, `ORD-0001` … `ORD-0720`, in date order | In this sample each Order ID appears once — one row = one order (a real shop file with multi-line orders would repeat an ID, and `COUNTA` would then count lines, not orders) |
+| Order Date | Date (`yyyy-mm-dd`) | Date of the transaction | Period Jan–Jun 2026; first transaction 2026-01-03, last 2026-06-30 |
 | Product | Text | Product name sold | 20 products (see below) |
 | Category | Text | Product category | Groceries, Electronics, Clothing, Home & Kitchen, Personal Care |
 | Region | Text | Customer/shop region for the sale | Punjab, Sindh, Khyber Pakhtunkhwa, Balochistan, Islamabad |
@@ -28,6 +28,7 @@ Source sheet: **Data** in `BrightMart_Sales_Dashboard.xlsx`, Excel Table `SalesD
 - No blank cells, no duplicate Order IDs, no negative quantities or prices.
 - Dashboard totals were verified by recalculation (LibreOffice headless):
   monthly, category and product tables each sum to the KPI total (PKR 3,469,346),
-  and monthly orders sum to 720. See the build verification in the delivery report.
+  and monthly orders sum to 720. The same totals are printed by
+  `python3 build_dashboard.py` and listed in the KPI table in `README.md`.
 - To reuse with real data: keep these exact column names and order; the Dashboard
   formulas cover rows 2–721, so extend the range if the real file is longer.

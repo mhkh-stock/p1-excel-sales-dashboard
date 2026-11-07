@@ -79,9 +79,8 @@ headers = ["Order ID", "Order Date", "Product", "Category", "Region", "Channel",
            "Quantity", "Unit Price (PKR)", "Sales (PKR)"]
 ws.append(headers); style_header(ws, 1, 9)
 for r in rows:
-    ws.append([r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], f"=G{ws.max_row+1}*H{ws.max_row+1}"])
-# Fix: formula row refs were off by one because max_row increments after append check;
-# rewrite formulas correctly:
+    ws.append([r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], None])
+# Set the Sales formula + formats per row (formula is always =G{row}*H{row}):
 for row in range(2, 2 + len(rows)):
     ws.cell(row=row, column=9, value=f"=G{row}*H{row}")
     ws.cell(row=row, column=2).number_format = "yyyy-mm-dd"
@@ -110,30 +109,30 @@ d = wb.create_sheet("Dashboard")
 d.sheet_properties.pageSetUpPr.fitToPage = True
 d.page_setup.orientation = "landscape"; d.page_setup.paperSize = d.PAPERSIZE_A3
 d.page_setup.fitToWidth = 1; d.page_setup.fitToHeight = 1
-d.print_area = "A1:F52"; d.print_title_rows = "1:2"
+d.print_area = "A1:F79"; d.print_title_rows = "1:2"  # F79 covers both charts (anchored A49, A64, ~14 rows tall each)
 title_block(d, "BrightMart Retail — Sales Dashboard",
             "DEMO / SAMPLE DATA ONLY — fictional shop, not real client data  •  Jan–Jun 2026  •  All KPIs are live Excel formulas", 6)
 for col, w in zip("ABCDEF", [24, 16, 16, 16, 24, 18]):
     d.column_dimensions[col].width = w
 
-# KPI block (rows 4-7): labels row 4, values row 5, notes row 6
+# KPI block (rows 4-7): labels row 4, values row 5, then labels row 6, values row 7.
+# Formulas are assigned in the loop below by label (the list holds labels only).
 d.merge_cells("A3:F3"); c = d.cell(row=3, column=1, value="KEY PERFORMANCE INDICATORS  (live formulas — change the Data sheet and these update)")
 c.font = Font(name="Calibri", size=12, bold=True, color=WHITE); c.fill = PatternFill("solid", fgColor=TEAL)
 kpis = [
-    ("Total Sales (PKR)", f"=SUM(Data!I2:I{N})", "#,##0"),
-    ("Total Orders", f"=COUNTA(Data!A2:A{N})", "#,##0"),
-    ("Avg Order Value (PKR)", "=IF(B5=0,0,A5/B5)", "#,##0"),  # fixed below by position
-    ("Total Units Sold", f"=SUM(Data!G2:G{N})", "#,##0"),
-    ("Best Category", "=INDEX(A18:A22,MATCH(MAX(D18:D22),D18:D22,0))", None),
-    ("Best Product", "=INDEX(A28:A47,MATCH(MAX(D28:D47),D28:D47,0))", None),
+    ("Total Sales (PKR)", "#,##0"),
+    ("Total Orders", "#,##0"),
+    ("Avg Order Value (PKR)", "#,##0"),
+    ("Total Units Sold", "#,##0"),
+    ("Best Category", None),
+    ("Best Product", None),
 ]
-# Layout: KPIs in A4:F5 as 3 per row? Simpler: two rows of 3.
-# Row 4 labels, row 5 values for first 3; row 6 labels, row 7 values for next 3.
+# Layout: two rows of 3 KPIs (labels row 4/6, values row 5/7).
 labels_vals = [(kpis[0], kpis[1], kpis[2]), (kpis[3], kpis[4], kpis[5])]
 # Correct AOV formula: total sales cell is A5, orders cell is C5 in this layout.
 for r_idx, trio in enumerate(labels_vals):
     lr = 4 + r_idx * 2; vr = lr + 1
-    for j, (label, formula, fmt) in enumerate(trio):
+    for j, (label, fmt) in enumerate(trio):
         col = 1 + j * 2
         d.merge_cells(start_row=lr, start_column=col, end_row=lr, end_column=col + 1)
         lc = d.cell(row=lr, column=col, value=label)
@@ -176,13 +175,9 @@ for i, m in enumerate(months):
     for col in range(1, 6):
         d.cell(row=r, column=col).border = BORDER; d.cell(row=r, column=col).font = Font(name="Calibri", size=11)
 
-# Category summary: header row 17? Monthly occupies 12-17, so category header at 19 is wrong.
-# Re-plan: monthly 12-17, category title row 18? Overlap with KPI refs (A18:A22, D18:D22).
-# So shift: category title row 18 conflicts — instead place category table starting row 19 with header 19?
-# KPI formulas above already point at A18:A22/D18:D22, so keep category header at 17? No.
-# SOLUTION: category title row 18, header row 19, data rows 20-24 — but KPI refs say 18-22.
-# Fix KPI refs by rewriting them now to the final layout (title 18, header 19, data 20-24).
-# Rewrite Best Category value cell (merged C7:D7 -> cell C7; Best Product stays at E7):
+# Category summary: title row 18, header row 19, data rows 20-24.
+# Best Category (cell C7) points at A20:A24 / D20:D24 — set here to match this layout.
+# (Best Product at E7 already points at A28:A47 / D28:D47 — correct, left as is.)
 d.cell(row=7, column=3).value = "=INDEX($A$20:$A$24,MATCH(MAX($D$20:$D$24),$D$20:$D$24,0))"
 d.merge_cells("A18:F18"); c = d.cell(row=18, column=1, value="SALES BY CATEGORY  (SUMIF / COUNTIF on Category)")
 c.font = Font(name="Calibri", size=12, bold=True, color=WHITE); c.fill = PatternFill("solid", fgColor=TEAL)

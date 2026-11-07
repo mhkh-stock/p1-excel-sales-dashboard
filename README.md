@@ -43,6 +43,12 @@ Change a row on the Data sheet and the Dashboard moves with it.
    *So what:* the fastest growth lever in this sample is basket size (bundles, add-ons),
    not just more orders — and WhatsApp ordering has room to grow from 13.4%.
 
+## Recommendation
+
+Protect the Dinner Set 24pc first (never stock out), then grow basket size with
+bundles/add-ons — in this sample, one more unit per order is worth more than more
+orders. WhatsApp ordering (13.4%) is the cheapest channel to grow next.
+
 ## Demo-data KPIs (verified, see below)
 
 | KPI | Value |
@@ -55,17 +61,26 @@ Change a row on the Data sheet and the Dashboard moves with it.
 | Best product | Dinner Set 24pc (PKR 500,289) |
 | Best month | March 2026 (PKR 659,012) |
 
+*Verified by recalculation: the build script prints the same totals from the
+source rows, and LibreOffice recalculation of the workbook reproduces every KPI,
+monthly, category and product total (all three tables sum to PKR 3,469,346;
+monthly orders sum to 720; no formula errors).*
+
 ## How to use it (under 5 steps)
 
 1. Open `BrightMart_Sales_Dashboard.xlsx` and start on the **Dashboard** sheet.
 2. To explore: go to the **Data** sheet, filter by Category, Region or Channel
    (or Insert → Slicer on the `SalesData` table for one-click filtering).
 3. To reuse it for a real shop: replace the rows on the Data sheet with real
-   transactions, keeping the same columns — every Dashboard formula already points
-   at the full column range, so totals, tables and charts update by themselves.
+   transactions, keeping the same columns — every Dashboard formula points at
+   rows 2–721, so totals, tables and charts update by themselves for up to 720
+   rows. For a longer file, extend the formula ranges (e.g. `I2:I721` → `I2:I1501`)
+   on the Dashboard and in the `SalesData` table.
 4. To print: Dashboard is set to landscape, fit-to-one-page. Data prints landscape
    with repeating header rows.
-5. To rebuild from scratch: run `python3 build_dashboard.py` (needs `openpyxl`).
+5. To rebuild from scratch: `pip install -r requirements.txt` (openpyxl),
+   then run `python3 build_dashboard.py` — it regenerates the workbook with the
+   same seeded demo data and prints the verified totals.
 
 ## Tools
 
@@ -78,6 +93,15 @@ Change a row on the Data sheet and the Dashboard moves with it.
 `build_dashboard.py`: 720 rows, Jan–Jun 2026, 20 products across 5 categories,
 5 regions, 3 channels). Prices are realistic PKR ranges per product, not real prices.
 No customer names, phone numbers or payment details exist in this data — by design.
+
+## What I learned / limits
+
+- Six months of demo data show seasonality only roughly — a full 12 months would
+  separate a real trend from a one-off dip like April.
+- No sales targets exist in this sample, so there is no targets-vs-actual view
+  (the Premium tier adds one when a buyer supplies targets).
+- Excel formulas are the right tool at this size; past ~10k rows a database +
+  Power BI would be the honest next step.
 
 ## Repo standard note
 
